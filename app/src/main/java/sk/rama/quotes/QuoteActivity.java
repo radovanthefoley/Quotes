@@ -10,9 +10,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-public class QuoteActivity extends AppCompatActivity {
+public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRetainFragment.QuoteTaskAware {
 
     public static final String TAG = "QuoteActivity";
+    private static QuoteLoadTaskRetainFragment quoteLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +30,8 @@ public class QuoteActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        quoteLoader = QuoteLoadTaskRetainFragment.findOrCreateQuoteLoadTaskRetainFragment(getFragmentManager());
     }
 
     @Override
@@ -55,5 +58,11 @@ public class QuoteActivity extends AppCompatActivity {
 
     public void loadNewQuote(View view) {
         Log.i(TAG, "loading new Quote");
+        quoteLoader.loadAsync();
+    }
+
+    @Override
+    public void onResponseReceived(String response) {
+        Log.i(TAG, "response received: " + response + this);
     }
 }
