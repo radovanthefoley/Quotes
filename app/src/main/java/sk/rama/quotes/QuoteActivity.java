@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRetainFragment.QuoteTaskAware {
 
@@ -64,5 +65,7 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
     @Override
     public void onResponseReceived(String response) {
         Log.i(TAG, "response received: " + response + this);
+        TextView quote = (TextView) findViewById(R.id.quote_text);
+        quote.setText(response);
     }
 }

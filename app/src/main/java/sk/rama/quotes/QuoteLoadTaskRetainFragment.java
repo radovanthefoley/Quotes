@@ -9,6 +9,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
+import java.io.IOException;
+import java.net.URL;
+
+import sk.rama.quotes.utils.Connection;
+
 /**
  * Created by Radovan Masaryk on 12/26/2016.
  * <p>
@@ -17,6 +22,7 @@ import android.os.Bundle;
  */
 
 public class QuoteLoadTaskRetainFragment extends Fragment {
+    public static final String URL = "http://api.forismatic.com/api/1.0/?method=getQuote&lang=en&format=json";
     private static final String TAG = "QuoteLoadTaskRetainFragment";
     private QuoteTaskAware mCallbacks;
 
@@ -81,15 +87,13 @@ public class QuoteLoadTaskRetainFragment extends Fragment {
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
-                // Do some work...
+                String result = null;
                 try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
+                    result = Connection.downloadUrl(new URL(URL));
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                return String.valueOf((new java.util.Random()).nextInt());
-                // ...
+                return result;
             }
 
             @Override

@@ -20,5 +20,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:freezesText="true"
         android:text="@string/initial_text" />
 </RelativeLayout>
