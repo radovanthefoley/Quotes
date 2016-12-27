@@ -21,5 +21,6 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:freezesText="true"
-        android:text="@string/initial_text" />
+        android:text="@string/initial_text"
+        android:textSize="30sp" />
 </RelativeLayout>

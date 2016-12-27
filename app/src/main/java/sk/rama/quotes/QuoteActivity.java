@@ -11,6 +11,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRetainFragment.QuoteTaskAware {
 
     public static final String TAG = "QuoteActivity";
@@ -65,7 +68,18 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
     @Override
     public void onResponseReceived(String response) {
         Log.i(TAG, "response received: " + response + this);
-        TextView quote = (TextView) findViewById(R.id.quote_text);
-        quote.setText(response);
+        String quote = null;
+        String author = null;
+        try {
+            JSONObject object = new JSONObject(response);
+            quote = object.getString("quoteText");
+            author = object.getString("quoteAuthor");
+        } catch (JSONException e) {
+            Log.e(TAG, "json parsing error");
+            e.printStackTrace();
+            return;
+        }
+        TextView text = (TextView) findViewById(R.id.quote_text);
+        text.setText(quote + "\n\n- " + author + " -");
     }
 }
