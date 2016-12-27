@@ -27,8 +27,8 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Snackbar.make(view, "Will be possible to store favorite quotes in the next version",
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
 
