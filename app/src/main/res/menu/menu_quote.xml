@@ -3,8 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="sk.rama.quotes.QuoteActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_storage"
+        android:icon="@android:drawable/btn_star_big_on"
         android:orderInCategory="100"
         android:title="@string/action_fav_quotes"
-        app:showAsAction="never" />
+        app:showAsAction="never|always"
+        />
 </menu>

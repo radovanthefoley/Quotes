@@ -1,5 +1,6 @@
 package sk.rama.quotes;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -26,7 +27,8 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        //TODO
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.store);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -52,8 +54,9 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_storage) {
+            Intent storageIntent = new Intent(this, StorageActivity.class);
+            startActivity(storageIntent);
             return true;
         }
 
