@@ -123,7 +123,7 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
     }
 
     protected void handleButtonsVisibility() {
-        FloatingActionButton storeQuoteButton = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton storeQuoteButton = (FloatingActionButton) findViewById(R.id.store);
         if (actualFqd == null) {
             storeQuoteButton.setVisibility(View.INVISIBLE);
         } else {
