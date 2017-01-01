@@ -15,10 +15,16 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRetainFragment.QuoteTaskAware {
 
     public static final String TAG = "QuoteActivity";
+    public static final String PREV_QUOTE = "PREV_QUOTE";
+    public static final String ACTUAL_QUOTE = "ACTUAL_QUOTE";
     private static QuoteLoadTaskRetainFragment quoteLoader;
+    private FullQuoteData actualFqd;
+    private FullQuoteData prevFqd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,23 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
                         Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
+
+        // handle prevQuote button
+        if (savedInstanceState != null) {
+            prevFqd = (FullQuoteData) savedInstanceState.getSerializable(PREV_QUOTE);
+            actualFqd = (FullQuoteData) savedInstanceState.getSerializable(ACTUAL_QUOTE);
+        }
+        FloatingActionButton prevQuoteButton = (FloatingActionButton) findViewById(R.id.prev_quote);
+        prevQuoteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                QuoteActivity.this.actualFqd = QuoteActivity.this.prevFqd;
+                QuoteActivity.this.prevFqd = null;
+                QuoteActivity.this.renderQueue();
+                QuoteActivity.this.handleButtonsVisibility();
+            }
+        });
+        handleButtonsVisibility();
 
         quoteLoader = QuoteLoadTaskRetainFragment.findOrCreateQuoteLoadTaskRetainFragment(getFragmentManager());
     }
@@ -71,18 +94,51 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
     @Override
     public void onResponseReceived(String response) {
         Log.i(TAG, "response received: " + response + this);
-        String quote = null;
-        String author = null;
+        if (response == null) return;
         try {
             JSONObject object = new JSONObject(response);
-            quote = object.getString("quoteText");
-            author = object.getString("quoteAuthor");
+            prevFqd = actualFqd;
+            actualFqd = new FullQuoteData();
+            actualFqd.quote = object.getString("quoteText");
+            actualFqd.author = object.getString("quoteAuthor");
         } catch (JSONException e) {
             Log.e(TAG, "json parsing error");
             e.printStackTrace();
             return;
         }
+        handleButtonsVisibility();
+        renderQueue();
+    }
+
+    private void renderQueue() {
         TextView text = (TextView) findViewById(R.id.quote_text);
-        text.setText(quote + "\n\n- " + author + " -");
+        text.setText(actualFqd.quote + "\n\n- " + actualFqd.author + " -");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        if (prevFqd != null) outState.putSerializable(PREV_QUOTE, prevFqd);
+        if (actualFqd != null) outState.putSerializable(ACTUAL_QUOTE, actualFqd);
+        super.onSaveInstanceState(outState);
+    }
+
+    protected void handleButtonsVisibility() {
+        FloatingActionButton storeQuoteButton = (FloatingActionButton) findViewById(R.id.fab);
+        if (actualFqd == null) {
+            storeQuoteButton.setVisibility(View.INVISIBLE);
+        } else {
+            storeQuoteButton.setVisibility(View.VISIBLE);
+        }
+        FloatingActionButton prevQuoteButton = (FloatingActionButton) findViewById(R.id.prev_quote);
+        if (prevFqd == null) {
+            prevQuoteButton.setVisibility(View.INVISIBLE);
+        } else {
+            prevQuoteButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private static class FullQuoteData implements Serializable {
+        String quote;
+        String author;
     }
 }
