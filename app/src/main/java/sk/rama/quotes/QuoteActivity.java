@@ -1,9 +1,11 @@
 package sk.rama.quotes;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -15,7 +17,10 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
+import sk.rama.quotes.data.FullQuote;
+import sk.rama.quotes.data.QuotesDbHelper;
+
+import static sk.rama.quotes.data.QuotesContract.QuoteEntry;
 
 public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRetainFragment.QuoteTaskAware {
 
@@ -23,8 +28,9 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
     public static final String PREV_QUOTE = "PREV_QUOTE";
     public static final String ACTUAL_QUOTE = "ACTUAL_QUOTE";
     private static QuoteLoadTaskRetainFragment quoteLoader;
-    private FullQuoteData actualFqd;
-    private FullQuoteData prevFqd;
+    private FullQuote actualFqd;
+    private FullQuote prevFqd;
+    private QuotesDbHelper mDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,20 +39,29 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //TODO
+        mDbHelper = new QuotesDbHelper(this);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.store);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Will be possible to store favorite quotes in the next version",
-                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                if (actualFqd == null) return;
+                new AsyncTask<Void, Void, Long>() {
+                    @Override
+                    protected Long doInBackground(Void... params) {
+                        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+                        ContentValues values = new ContentValues();
+                        values.put(QuoteEntry.COLUMN_NAME_AUTHOR, actualFqd.author);
+                        values.put(QuoteEntry.COLUMN_NAME_TEXT, actualFqd.quote);
+                        return db.insert(QuoteEntry.TABLE_NAME, null, values);
+                    }
+                }.execute();
             }
         });
 
         // handle prevQuote button
         if (savedInstanceState != null) {
-            prevFqd = (FullQuoteData) savedInstanceState.getSerializable(PREV_QUOTE);
-            actualFqd = (FullQuoteData) savedInstanceState.getSerializable(ACTUAL_QUOTE);
+            prevFqd = (FullQuote) savedInstanceState.getSerializable(PREV_QUOTE);
+            actualFqd = (FullQuote) savedInstanceState.getSerializable(ACTUAL_QUOTE);
         }
         FloatingActionButton prevQuoteButton = (FloatingActionButton) findViewById(R.id.prev_quote);
         prevQuoteButton.setOnClickListener(new View.OnClickListener() {
@@ -98,9 +113,10 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
         try {
             JSONObject object = new JSONObject(response);
             prevFqd = actualFqd;
-            actualFqd = new FullQuoteData();
+            actualFqd = new FullQuote();
             actualFqd.quote = object.getString("quoteText");
             actualFqd.author = object.getString("quoteAuthor");
+            actualFqd.url = object.getString("quoteLink");
         } catch (JSONException e) {
             Log.e(TAG, "json parsing error");
             e.printStackTrace();
@@ -122,6 +138,12 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    protected void onDestroy() {
+        mDbHelper.close();
+        super.onDestroy();
+    }
+
     protected void handleButtonsVisibility() {
         FloatingActionButton storeQuoteButton = (FloatingActionButton) findViewById(R.id.store);
         if (actualFqd == null) {
@@ -137,8 +159,4 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
         }
     }
 
-    private static class FullQuoteData implements Serializable {
-        String quote;
-        String author;
-    }
 }

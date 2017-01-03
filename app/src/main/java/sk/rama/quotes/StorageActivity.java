@@ -1,13 +1,21 @@
 package sk.rama.quotes;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.List;
+
+import sk.rama.quotes.data.FullQuote;
+import sk.rama.quotes.data.QuotesDataSource;
 
 public class StorageActivity extends AppCompatActivity {
+
+    private QuotesDataSource quotesDS;
+    private ArrayAdapter<FullQuote> mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,14 +24,29 @@ public class StorageActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.search);
-        //TODO
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Searching not implemented yet", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        quotesDS = new QuotesDataSource(this);
+        quotesDS.open();
+
+        mAdapter = new ArrayAdapter<FullQuote>(this, R.layout.list_quote_element);
+        ListView quotesLV = (ListView) findViewById(R.id.list_queues);
+        quotesLV.setAdapter(mAdapter);
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        renderQuotes();
+    }
+
+    @Override
+    protected void onDestroy() {
+        quotesDS.close();
+        super.onDestroy();
+    }
+
+    private void renderQuotes() {
+        List<FullQuote> allQuotes = quotesDS.getAllQuotes();
+        mAdapter.clear();
+        mAdapter.addAll(allQuotes);
     }
 }
