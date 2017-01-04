@@ -1,12 +1,15 @@
 package sk.rama.quotes;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -34,6 +37,7 @@ public class StorageActivity extends AppCompatActivity {
         mAdapter = new ArrayAdapter<FullQuote>(this, R.layout.list_quote_element);
         ListView quotesLV = (ListView) findViewById(R.id.list_queues);
         quotesLV.setAdapter(mAdapter);
+        quotesLV.setTextFilterEnabled(true);
 
         quotesLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -59,6 +63,16 @@ public class StorageActivity extends AppCompatActivity {
                 });
                 alert.show();
                 return true;
+            }
+        });
+
+        FloatingActionButton searchButton = (FloatingActionButton) findViewById(R.id.quotes_search_button);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputMethodManager inputMethodManager =
+                        (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
             }
         });
     }
