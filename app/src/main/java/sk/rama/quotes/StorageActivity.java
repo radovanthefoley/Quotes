@@ -1,9 +1,13 @@
 package sk.rama.quotes;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -30,6 +34,33 @@ public class StorageActivity extends AppCompatActivity {
         mAdapter = new ArrayAdapter<FullQuote>(this, R.layout.list_quote_element);
         ListView quotesLV = (ListView) findViewById(R.id.list_queues);
         quotesLV.setAdapter(mAdapter);
+
+        quotesLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(StorageActivity.this);
+                alert.setTitle("Delete");
+                alert.setMessage("Do you want to delete the quote");
+                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FullQuote fq = mAdapter.getItem(position);
+                        quotesDS.deleteQuote(fq);
+                        mAdapter.remove(fq);
+                        mAdapter.notifyDataSetChanged();
+                        dialog.dismiss();
+                    }
+                });
+                alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                alert.show();
+                return true;
+            }
+        });
     }
 
     @Override

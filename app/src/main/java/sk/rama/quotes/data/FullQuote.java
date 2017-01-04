@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 
 public class FullQuote implements Serializable {
+    public long id;
     public String quote;
     public String author;
     public String url;

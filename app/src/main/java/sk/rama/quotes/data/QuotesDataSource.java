@@ -18,7 +18,7 @@ import static sk.rama.quotes.data.QuotesContract.QuoteEntry;
 public class QuotesDataSource {
     private SQLiteDatabase database;
     private QuotesDbHelper mDbHelper;
-    private String[] allColumns = {QuoteEntry.COLUMN_NAME_AUTHOR,
+    private String[] allColumns = {QuoteEntry.COLUMN_NAME_ID, QuoteEntry.COLUMN_NAME_AUTHOR,
             QuoteEntry.COLUMN_NAME_TEXT, QuoteEntry.COLUMN_NAME_URL};
 
     public QuotesDataSource(Context context) {
@@ -50,11 +50,17 @@ public class QuotesDataSource {
         return comments;
     }
 
+    public void deleteQuote(FullQuote quote) {
+        database.delete(QuoteEntry.TABLE_NAME, QuoteEntry.COLUMN_NAME_ID
+                + " = " + quote.id, null);
+    }
+
     private FullQuote cursorToComment(Cursor cursor) {
         FullQuote quote = new FullQuote();
-        quote.author = cursor.getString(0);
-        quote.quote = cursor.getString(1);
-        quote.url = cursor.getString(2);
+        quote.id = cursor.getLong(0);
+        quote.author = cursor.getString(1);
+        quote.quote = cursor.getString(2);
+        quote.url = cursor.getString(3);
         return quote;
     }
 }
