@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="sk.rama.quotes.StorageActivity">
+    <item
+        android:id="@+id/menu_storage_help"
+        android:icon="@android:drawable/ic_menu_help"
+        android:orderInCategory="100"
+        android:title="@string/menu_storage_help"
+        app:showAsAction="never|always"
+        />
+</menu>
