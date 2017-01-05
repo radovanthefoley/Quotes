@@ -44,6 +44,8 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
         setSupportActionBar(toolbar);
 
         mDbHelper = new QuotesDbHelper(this);
+
+        // store quote button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.store);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +94,7 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
         });
         handleButtonsVisibility();
 
+        // quote loader fragment
         quoteLoader = QuoteLoadTaskRetainFragment.findOrCreateQuoteLoadTaskRetainFragment(getFragmentManager());
     }
 
@@ -105,6 +108,7 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+        // storage action starter
         if (id == R.id.action_storage) {
             Intent storageIntent = new Intent(this, StorageActivity.class);
             startActivity(storageIntent);
@@ -112,19 +116,6 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void loadNewQuote(View view) {
-        Log.i(TAG, "loading new Quote");
-        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-        if (!isConnected) {
-            Log.i(TAG, "no internet connection");
-            Toast.makeText(this, "No internet connection detected", Toast.LENGTH_LONG).show();
-            return;
-        }
-        quoteLoader.loadAsync();
     }
 
     @Override
@@ -147,11 +138,6 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
         renderQueue();
     }
 
-    private void renderQueue() {
-        TextView text = (TextView) findViewById(R.id.quote_text);
-        text.setText(actualFqd.quote + "\n\n- " + actualFqd.author + " -");
-    }
-
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (prevFqd != null) outState.putSerializable(PREV_QUOTE, prevFqd);
@@ -163,6 +149,20 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
     protected void onDestroy() {
         mDbHelper.close();
         super.onDestroy();
+    }
+
+    // called as onClick from quote_text text view
+    public void loadNewQuote(View view) {
+        Log.i(TAG, "loading new Quote");
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        if (!isConnected) {
+            Log.i(TAG, "no internet connection");
+            Toast.makeText(this, "No internet connection detected", Toast.LENGTH_LONG).show();
+            return;
+        }
+        quoteLoader.loadAsync();
     }
 
     protected void handleButtonsVisibility() {
@@ -178,6 +178,11 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
         } else {
             prevQuoteButton.setVisibility(View.VISIBLE);
         }
+    }
+
+    private void renderQueue() {
+        TextView text = (TextView) findViewById(R.id.quote_text);
+        text.setText(actualFqd.quote + "\n\n- " + actualFqd.author + " -");
     }
 
 }

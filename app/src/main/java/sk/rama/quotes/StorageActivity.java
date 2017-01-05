@@ -50,25 +50,25 @@ public class StorageActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(StorageActivity.this);
-                alert.setTitle("Delete");
-                alert.setMessage("Do you want to delete the quote");
-                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        FullQuote fq = mAdapter.getItem(position);
-                        quotesDS.deleteQuote(fq);
-                        mAdapter.remove(fq);
-                        mAdapter.notifyDataSetChanged();
-                        dialog.dismiss();
-                    }
-                });
-                alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                alert.show();
+                alert.setTitle("Delete")
+                        .setMessage("Do you want to delete the quote")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                FullQuote fq = mAdapter.getItem(position);
+                                quotesDS.deleteQuote(fq);
+                                mAdapter.remove(fq);
+                                mAdapter.notifyDataSetChanged();
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
                 return true;
             }
         });
@@ -101,7 +101,7 @@ public class StorageActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        renderQuotes();
+        loadQuotes();
     }
 
     @Override
@@ -114,6 +114,7 @@ public class StorageActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+        // help dialog
         if (id == R.id.menu_storage_help) {
             AlertDialog.Builder alert = new AlertDialog.Builder(StorageActivity.this);
             alert.setTitle("Help")
@@ -132,7 +133,7 @@ public class StorageActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void renderQuotes() {
+    private void loadQuotes() {
         List<FullQuote> allQuotes = quotesDS.getAllQuotes();
         mAdapter.clear();
         mAdapter.addAll(allQuotes);

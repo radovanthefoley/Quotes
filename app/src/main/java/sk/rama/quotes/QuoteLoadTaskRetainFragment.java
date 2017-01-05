@@ -73,14 +73,12 @@ public class QuoteLoadTaskRetainFragment extends Fragment {
      */
     protected void onAttachToContext(Context context) {
         mCallbacks = (QuoteTaskAware) context;
-        //Log.i("tag", "onAttach");
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mCallbacks = null;
-        //Log.i("tag", "onDetach");
     }
 
     public void loadAsync() {
@@ -98,7 +96,6 @@ public class QuoteLoadTaskRetainFragment extends Fragment {
 
             @Override
             protected void onPostExecute(String response) {
-                //Log.i("tag", "postExec " + mCallbacks);
                 if (mCallbacks != null) {
                     mCallbacks.onResponseReceived(response);
                 }
@@ -106,8 +103,9 @@ public class QuoteLoadTaskRetainFragment extends Fragment {
         }.execute();
     }
 
-    interface QuoteTaskAware {
+    public interface QuoteTaskAware {
         void onResponseReceived(String response);
     }
+
 }
 
