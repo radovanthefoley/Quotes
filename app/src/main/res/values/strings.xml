@@ -2,5 +2,5 @@
     <string name="app_name">Quotes</string>
     <string name="action_fav_quotes">Favorite Quotes</string>
     <string name="initial_text">Tap to load new quotes :)</string>
-    <string name="title_activity_storage">StorageActivity</string>
+    <string name="title_activity_storage">My Favorite Quotes</string>
 </resources>
