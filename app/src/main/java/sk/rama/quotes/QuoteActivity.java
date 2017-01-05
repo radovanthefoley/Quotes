@@ -58,6 +58,19 @@ public class QuoteActivity extends AppCompatActivity implements QuoteLoadTaskRet
                         values.put(QuoteEntry.COLUMN_NAME_TEXT, actualFqd.quote);
                         return db.insert(QuoteEntry.TABLE_NAME, null, values);
                     }
+
+                    @Override
+                    protected void onPostExecute(Long id) {
+                        super.onPostExecute(id);
+                        Log.i(TAG, "Quote stored in db with id: " + id);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(QuoteActivity.this,
+                                        "Quote saved as favorite", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                 }.execute();
             }
         });
