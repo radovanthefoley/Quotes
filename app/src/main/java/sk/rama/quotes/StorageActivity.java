@@ -1,5 +1,7 @@
 package sk.rama.quotes;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -13,6 +15,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -34,11 +38,12 @@ public class StorageActivity extends AppCompatActivity {
         quotesDS = new QuotesDataSource(this);
         quotesDS.open();
 
-        mAdapter = new ArrayAdapter<FullQuote>(this, R.layout.list_quote_element);
+        mAdapter = new ArrayAdapter<>(this, R.layout.list_quote_element);
         ListView quotesLV = (ListView) findViewById(R.id.list_queues);
         quotesLV.setAdapter(mAdapter);
         quotesLV.setTextFilterEnabled(true);
 
+        // deletion
         quotesLV.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -66,6 +71,20 @@ public class StorageActivity extends AppCompatActivity {
             }
         });
 
+        // copy to clipboard
+        quotesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                TextView mTextView = (TextView) view;
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("quote", mTextView.getText());
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(StorageActivity.this, "Copied to clipboard", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
+
+        // search
         FloatingActionButton searchButton = (FloatingActionButton) findViewById(R.id.quotes_search_button);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
